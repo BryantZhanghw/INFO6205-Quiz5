@@ -128,9 +128,26 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
 
     // insert the key-value pair in the subtree rooted at h
     private Node put(Node h, Key key, Value val) {
-        //TO BE IMPLEMENTED
-        
+        if (h == null) {
+            return new Node(key, val, RED, 1);
+        }
+        //compare;
+        int b  = key.compareTo(h.key);
+        if (b < 0) {
+            h.left = put(h.left, key, val);
+        } else if (b > 0) {
+            h.right = put(h.right, key, val);
+        } else {
+            h.val = val;
+        }
+        //rotate and flip colors;
+        if (isRed(h.right) && !isRed(h.left)) h = rotateLeft(h);
+        if (isRed(h.left) && isRed(h.left.left)) h = rotateRight(h);
+        if (isRed(h.left) && isRed(h.right)) flipColors(h);
+        h.size = size(h.left) + size(h.right) + 1;
+        return h;
     }
+
 
     /***************************************************************************
      *  Red-black tree deletion.
@@ -249,17 +266,28 @@ public class RedBlackBST<Key extends Comparable<Key>, Value> {
     /***************************************************************************
      *  Red-black tree helper functions.
      ***************************************************************************/
-
     // make a left-leaning link lean to the right
-    private Node rotateRight(Node h) {
-        //TO BE IMPLEMENTED
-       
+    private Node rotateLeft(Node h) {
+        Node a = h.right;
+        h.right = a.left;
+        a.left = h;
+        a.color = h.color;
+        h.color = RED;
+        a.size = h.size;
+        h.size = size(h.left) + size(h.right) + 1;
+        return a;
     }
 
     // make a right-leaning link lean to the left
-    private Node rotateLeft(Node h) {
-        //TO BE IMPLEMENTED
-       
+    private Node rotateRight(Node h) {
+        Node a = h.left;
+        h.left = a.right;
+        a.right = h;
+        a.color = h.color;
+        h.color = RED;
+        a.size = h.size;
+        h.size = size(h.left) + size(h.right) + 1;
+        return a;
     }
 
     // flip the colors of a node and its two children
